@@ -1,10 +1,11 @@
-import { auth } from "@/config/firebase";
+import { auth, db } from "@/config/firebase";
 import { Unsubscribe, User, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import PersonalCard from "@/components/PersonalCard";
 import Head from "next/head";
+import { collection, deleteDoc, getDocs, query, where } from "firebase/firestore";
 
 const MyPage = () => {
   const [user, setUser] = useState<User>();
@@ -26,7 +27,28 @@ const MyPage = () => {
   });
 
   // 刪除帳戶
-  const deleteAccount = () => { 
+  const deleteAccount = async () => { 
+    
+    try {
+      const q = query(collection(db, 'collectionName'), where('uid', '==', user?.uid)); // 替换为实际的集合名称和字段名
+  
+      const querySnapshot = await getDocs(q);
+  
+      querySnapshot.forEach(async (doc) => {
+        const docRef = doc.ref;
+  
+        // 删除文档
+        await deleteDoc(docRef);
+      });
+  
+      toast.success("刪除成功！", {
+        position: "top-right"
+      });
+    } catch (error) {
+      toast.error(`刪除失敗！\n錯誤訊息：\n${error}`, {
+        position: "top-right"
+      });
+    }
       
     // 刪除帳戶
     auth.currentUser?.delete().then(() => {
