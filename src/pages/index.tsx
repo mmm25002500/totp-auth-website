@@ -5,7 +5,7 @@ const Index = () => {
   return (
     <>
       <Head>
-        <title>TOTP 2FA | 首頁</title>
+        <title>首頁 - TOTP 2FA</title>
       </Head>
     </>
   );

@@ -11,7 +11,7 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <>
       <Head>
-        <title>Bityo 首頁</title>
+        <title>首頁 - TOTP 2FA</title>
         <meta name="description" content="Create dark mode in next and tailwind" />
       </Head>
       <div className="min-h-screen flex flex-col">

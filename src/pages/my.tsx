@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import PersonalCard from "@/components/PersonalCard";
+import Head from "next/head";
 
 const MyPage = () => {
   const [user, setUser] = useState<User>();
@@ -45,21 +46,26 @@ const MyPage = () => {
   }, []);
 
   return (
-    <div className="container mx-auto pt-8 pl-5 pr-5">
-      <div className="text-left text-gray-500 dark:text-gray-400 text-2xl">
-        <p>
-          個人頁面
-        </p>
-        <PersonalCard
-          name={user?.displayName || ''}
-          email={user?.email || ''}
-          phone={user?.phoneNumber || ''}
-          image={user?.photoURL || ''}
-          uid={user?.uid || ''}
-          deleteAccount={deleteAccount}
-        ></PersonalCard>
+    <>
+      <Head>
+        <title>{user?.displayName || '我的頁面'} - TOTP 2FA</title>
+      </Head>
+      <div className="container mx-auto pt-8 pl-5 pr-5">
+        <div className="text-left text-gray-500 dark:text-gray-400 text-2xl">
+          <p>
+            個人頁面
+          </p>
+          <PersonalCard
+            name={user?.displayName || ''}
+            email={user?.email || ''}
+            phone={user?.phoneNumber || ''}
+            image={user?.photoURL || ''}
+            uid={user?.uid || ''}
+            deleteAccount={deleteAccount}
+          ></PersonalCard>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 

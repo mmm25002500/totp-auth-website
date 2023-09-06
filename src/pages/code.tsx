@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import CodeCard from '@/components/CodeCard';
+import Head from 'next/head';
 
 interface totpItems {
   name: string;
@@ -171,52 +172,57 @@ const Code = () => {
     }, []);
   
   return (
-    <div className="container mx-auto pt-8 pl-5 pr-5">
-      {
-        userData?.totp.length === 0 ? (
-          <div className="flex items-center p-4 mb-4 text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800 text-lg" role="alert">
-            <FontAwesomeIcon icon={faTriangleExclamation} className="inline w-4 h-4 mr-3" />
-            <span className="sr-only">Info</span>
-            <div>
-              <span className="font-bold">喔不!</span> 驗證碼是空的！！！
-              <button className="underline underline-offset-4 text-cyan-300" onClick={() => router.push('/addCode')}>點我立刻去新增驗證碼？</button>
+    <>
+      <Head>
+        <title>驗證碼 - TOTP 2FA</title>
+      </Head>
+      <div className="container mx-auto pt-8 pl-5 pr-5">
+        {
+          userData?.totp.length === 0 ? (
+            <div className="flex items-center p-4 mb-4 text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800 text-lg" role="alert">
+              <FontAwesomeIcon icon={faTriangleExclamation} className="inline w-4 h-4 mr-3" />
+              <span className="sr-only">Info</span>
+              <div>
+                <span className="font-bold">喔不!</span> 驗證碼是空的！！！
+                <button className="underline underline-offset-4 text-cyan-300" onClick={() => router.push('/addCode')}>點我立刻去新增驗證碼？</button>
+              </div>
+            </div>
+          ) : (
+              <button onClick={clearTotpItem} className="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800">
+              <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+                  點我清空所有驗證碼
+              </span>
+            </button>
+          )
+        }
+        {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"> */}
+          <div className="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:px-8 sm:pt-8 dark:bg-gray-800 dark:border-gray-700">
+            <div className="flex items-center justify-between mb-4">
+              <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">驗證碼</h5>
+              <button onClick={ () => router.push('/addCode')} className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">
+                  新增驗證碼
+              </button>
+            </div>
+            <div className="flow-root">
+              <ul role="list" className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {
+                    userData?.totp.map((items) => (
+                      <div key={items.name}>
+                        <CodeCard
+                          code={items.secret}
+                          name={items.name}
+                          category={items.category}
+                          deleteCode={() => deleteTotpItem(items.secret)}
+                        />
+                      </div>
+                    ))
+                  }
+              </ul>
             </div>
           </div>
-        ) : (
-            <button onClick={clearTotpItem} className="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800">
-            <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
-                點我清空所有驗證碼
-            </span>
-          </button>
-        )
-      }
-      {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"> */}
-        <div className="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:px-8 sm:pt-8 dark:bg-gray-800 dark:border-gray-700">
-          <div className="flex items-center justify-between mb-4">
-            <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">驗證碼</h5>
-            <button onClick={ () => router.push('/addCode')} className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">
-                新增驗證碼
-            </button>
-          </div>
-          <div className="flow-root">
-            <ul role="list" className="divide-y divide-gray-200 dark:divide-gray-700">
-                {
-                  userData?.totp.map((items) => (
-                    <div key={items.name}>
-                      <CodeCard
-                        code={items.secret}
-                        name={items.name}
-                        category={items.category}
-                        deleteCode={() => deleteTotpItem(items.secret)}
-                      />
-                    </div>
-                  ))
-                }
-            </ul>
-          </div>
-        </div>
-      {/* </div> */}
-    </div>
+        {/* </div> */}
+      </div>
+    </>
   );
 };
 
