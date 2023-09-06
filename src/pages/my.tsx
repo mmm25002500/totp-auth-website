@@ -30,7 +30,7 @@ const MyPage = () => {
   const deleteAccount = async () => { 
     
     try {
-      const q = query(collection(db, 'collectionName'), where('uid', '==', user?.uid)); // 替换为实际的集合名称和字段名
+      const q = query(collection(db, 'user'), where('uid', '==', user?.uid)); // 替换为实际的集合名称和字段名
   
       const querySnapshot = await getDocs(q);
   
