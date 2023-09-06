@@ -1,6 +1,6 @@
 import { auth, db } from "@/config/firebase";
 import { GoogleAuthProvider, Unsubscribe, User, UserMetadata, onAuthStateChanged, signInWithPopup } from "firebase/auth";
-import { addDoc, collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { toast } from 'react-hot-toast';
 
 // 定義使用者資料格式
@@ -54,9 +54,50 @@ export const syncGoogleUserData = async (user: User) => {
   }
 }
 
+// 刪除帳戶
+export const deleteAccount = async (user: User) => { 
+  
+  try {
+    const q = query(collection(db, 'user'), where('uid', '==', user?.uid));
+
+    const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach(async (doc) => {
+      const docRef = doc.ref;
+
+      // 删除 Doc
+      await deleteDoc(docRef);
+    });
+
+    toast.success("刪除成功！", {
+      position: "top-right"
+    });
+  } catch (error) {
+    toast.error(`刪除失敗！\n錯誤訊息：\n${error}`, {
+      position: "top-right"
+    });
+  }
+    
+  // 刪除帳戶
+  auth.currentUser?.delete().then(() => {
+    toast.success("刪除成功！", {
+      position: "top-right" 
+    });
+  }).catch((error) => {
+    toast.error(`刪除失敗！\n錯誤訊息：\n${error}`, {
+      position: "top-right"
+    });
+  });
+}
+
 // 更新 name 欄位
-export const updateNameField = async (userDoc: any, name: string) => {
-  const docRef = doc(db, 'user', userDoc.id);
+export const updateNameField = async (user: User, name: string) => {
+  const uid = user.uid;
+
+  // 查詢 user 文檔，以 uid 為條件
+  const userQuery = query(collection(db, 'user'), where('uid', '==', uid));
+  const userDoc = await getDocs(userQuery);
+  const docRef = doc(db, 'user', userDoc.docs[0].id);
 
   // 更新 name 到 doc
   await updateDoc(docRef, {
@@ -73,8 +114,13 @@ export const updateNameField = async (userDoc: any, name: string) => {
 };
 
 // 更新 email 欄位
-export const updateEmailField = async (userDoc: any, email: string) => {
-  const docRef = doc(db, 'user', userDoc.id);
+export const updateEmailField = async (user: User, email: string) => {
+  const uid = user.uid;
+
+  // 查詢 user 文檔，以 uid 為條件
+  const userQuery = query(collection(db, 'user'), where('uid', '==', uid));
+  const userDoc = await getDocs(userQuery);
+  const docRef = doc(db, 'user', userDoc.docs[0].id);
 
   // 更新 email 到 doc
   await updateDoc(docRef, {
@@ -91,8 +137,13 @@ export const updateEmailField = async (userDoc: any, email: string) => {
 };
 
 // 更新 photoURL 欄位
-export const updatePhotoURLField = async (userDoc: any, photoURL: string) => {
-  const docRef = doc(db, 'user', userDoc.id);
+export const updatePhotoURLField = async (user: User, photoURL: string) => {
+  const uid = user.uid;
+
+  // 查詢 user 文檔，以 uid 為條件
+  const userQuery = query(collection(db, 'user'), where('uid', '==', uid));
+  const userDoc = await getDocs(userQuery);
+  const docRef = doc(db, 'user', userDoc.docs[0].id);
 
   // 更新 photoURL 到 doc
   await updateDoc(docRef, {
@@ -109,8 +160,13 @@ export const updatePhotoURLField = async (userDoc: any, photoURL: string) => {
 }
 
 // 更新 bgPhotoURL 欄位
-export const updateBgPhotoURLField = async (userDoc: any, bgPhotoURL: string) => {
-  const docRef = doc(db, 'user', userDoc.id);
+export const updateBgPhotoURLField = async (user: User, bgPhotoURL: string) => {
+  const uid = user.uid;
+
+  // 查詢 user 文檔，以 uid 為條件
+  const userQuery = query(collection(db, 'user'), where('uid', '==', uid));
+  const userDoc = await getDocs(userQuery);
+  const docRef = doc(db, 'user', userDoc.docs[0].id);
 
   // 更新 bgPhotoURL 到 doc
   await updateDoc(docRef, {
@@ -127,8 +183,13 @@ export const updateBgPhotoURLField = async (userDoc: any, bgPhotoURL: string) =>
 }
 
 // 更新 emailVerified 欄位
-export const updateEmailVerifiedField = async (userDoc: any, emailVerified: boolean) => {
-  const docRef = doc(db, 'user', userDoc.id);
+export const updateEmailVerifiedField = async (user: User, emailVerified: boolean) => {
+  const uid = user.uid;
+
+  // 查詢 user 文檔，以 uid 為條件
+  const userQuery = query(collection(db, 'user'), where('uid', '==', uid));
+  const userDoc = await getDocs(userQuery);
+  const docRef = doc(db, 'user', userDoc.docs[0].id);
 
   // 更新 emailVerified 到 doc
   await updateDoc(docRef, {
@@ -145,8 +206,13 @@ export const updateEmailVerifiedField = async (userDoc: any, emailVerified: bool
 }
 
 // 更新 phoneNumber 欄位
-export const updatePhoneNumberField = async (userDoc: any, phoneNumber: string) => {
-  const docRef = doc(db, 'user', userDoc.id);
+export const updatePhoneNumberField = async (user: User, phoneNumber: string) => {
+  const uid = user.uid;
+
+  // 查詢 user 文檔，以 uid 為條件
+  const userQuery = query(collection(db, 'user'), where('uid', '==', uid));
+  const userDoc = await getDocs(userQuery);
+  const docRef = doc(db, 'user', userDoc.docs[0].id);
 
   // 更新 phoneNumber 到 doc
   await updateDoc(docRef, {
@@ -163,8 +229,13 @@ export const updatePhoneNumberField = async (userDoc: any, phoneNumber: string) 
 }
 
 // 更新 metadata 欄位
-export const updateMetadataField = async (userDoc: any, metadata: UserMetadata) => {
-  const docRef = doc(db, 'user', userDoc.id);
+export const updateMetadataField = async (user: User, metadata: UserMetadata) => {
+  const uid = user.uid;
+
+  // 查詢 user 文檔，以 uid 為條件
+  const userQuery = query(collection(db, 'user'), where('uid', '==', uid));
+  const userDoc = await getDocs(userQuery);
+  const docRef = doc(db, 'user', userDoc.docs[0].id);
 
   // 更新 metadata 到 doc
   await updateDoc(docRef, {
@@ -184,11 +255,16 @@ export const updateMetadataField = async (userDoc: any, metadata: UserMetadata) 
 }
 
 // 建立 name 欄位
-export const handleNameField = async (userDoc: any, name: string) => {
-  const docRef = doc(db, 'user', userDoc.id);
+export const handleNameField = async (user: User, name: string) => {
+  const uid = user.uid;
+
+  // 查詢 user 文檔，以 uid 為條件
+  const userQuery = query(collection(db, 'user'), where('uid', '==', uid));
+  const userDoc = await getDocs(userQuery);
+  const docRef = doc(db, 'user', userDoc.docs[0].id);
 
   // 如果 firestore 沒有 name 欄位，就加入
-  if (!userDoc.data().name) {
+  if (!userDoc.docs[0].data().name) {
     // 加入 name 到 doc
     await updateDoc(docRef, {
       name: name
@@ -205,11 +281,16 @@ export const handleNameField = async (userDoc: any, name: string) => {
 };
 
 // 建立 email 欄位
-export const handleEmailField = async (userDoc: any, email: string) => {
-  const docRef = doc(db, 'user', userDoc.id);
+export const handleEmailField = async (user: User, email: string) => {
+  const uid = user.uid;
+
+  // 查詢 user 文檔，以 uid 為條件
+  const userQuery = query(collection(db, 'user'), where('uid', '==', uid));
+  const userDoc = await getDocs(userQuery);
+  const docRef = doc(db, 'user', userDoc.docs[0].id);
 
   // 如果 firestore 沒有 email 欄位，就加入
-  if (!userDoc.data().email) {
+  if (!userDoc.docs[0].data().email) {
     // 加入 email 到 doc
     await updateDoc(docRef, {
       email: email
@@ -226,11 +307,16 @@ export const handleEmailField = async (userDoc: any, email: string) => {
 };
 
 // 建立 photoURL 欄位
-export const handlePhotoURLField = async (userDoc: any, photoURL: string) => {
-  const docRef = doc(db, 'user', userDoc.id);
+export const handlePhotoURLField = async (user: User, photoURL: string) => {
+  const uid = user.uid;
+
+  // 查詢 user 文檔，以 uid 為條件
+  const userQuery = query(collection(db, 'user'), where('uid', '==', uid));
+  const userDoc = await getDocs(userQuery);
+  const docRef = doc(db, 'user', userDoc.docs[0].id);
 
   // 如果 firestore 沒有 photoURL 欄位，就加入
-  if (!userDoc.data().photoURL) {
+  if (!userDoc.docs[0].data().photoURL) {
     // 加入 photoURL 到 doc
     await updateDoc(docRef, {
       photoURL: photoURL
@@ -247,14 +333,19 @@ export const handlePhotoURLField = async (userDoc: any, photoURL: string) => {
 }
 
 // 建立 bgPhotoURL 欄位
-export const handleBgPhotoURLField = async (userDoc: any) => {
-  const docRef = doc(db, 'user', userDoc.id);
+export const handleBgPhotoURLField = async (user: User) => {
+  const uid = user.uid;
+
+  // 查詢 user 文檔，以 uid 為條件
+  const userQuery = query(collection(db, 'user'), where('uid', '==', uid));
+  const userDoc = await getDocs(userQuery);
+  const docRef = doc(db, 'user', userDoc.docs[0].id);
 
   // 如果 firestore 沒有 bgPhotoURL 欄位，就加入
-  if (!userDoc.data().bgPhotoURL) {
+  if (!userDoc.docs[0].data().bgPhotoURL) {
     // 加入 bgPhotoURL 到 doc
     await updateDoc(docRef, {
-      bgPhotoURL: ''
+      bgPhotoURL: 'https://img.freepik.com/free-photo/abstract-luxury-plain-blur-grey-black-gradient-used-as-background-studio-wall-display-your-products_1258-63747.jpg?w=2000'
     }).then(() => {
       toast.success('建立使用者背景圖片成功！', {
         position: "top-right"
@@ -268,11 +359,16 @@ export const handleBgPhotoURLField = async (userDoc: any) => {
 }
 
 // 建立 emailVerified 欄位
-export const handleEmailVerifiedField = async (userDoc: any, emailVerified: boolean) => {
-  const docRef = doc(db, 'user', userDoc.id);
+export const handleEmailVerifiedField = async (user: User, emailVerified: boolean) => {
+  const uid = user.uid;
+
+  // 查詢 user 文檔，以 uid 為條件
+  const userQuery = query(collection(db, 'user'), where('uid', '==', uid));
+  const userDoc = await getDocs(userQuery);
+  const docRef = doc(db, 'user', userDoc.docs[0].id);
 
   // 如果 firestore 沒有 emailVerified 欄位，就加入
-  if (!userDoc.data().emailVerified) {
+  if (!userDoc.docs[0].data().emailVerified) {
     // 加入 emailVerified 到 doc
     await updateDoc(docRef, {
       emailVerified: emailVerified
@@ -289,14 +385,19 @@ export const handleEmailVerifiedField = async (userDoc: any, emailVerified: bool
 }
 
 // 建立 phoneNumber 欄位
-export const handlePhoneNumberField = async (userDoc: any, phoneNumber: string) => {
-  const docRef = doc(db, 'user', userDoc.id);
+export const handlePhoneNumberField = async (user: User, phoneNumber: string | null) => {
+  const uid = user.uid;
+
+  // 查詢 user 文檔，以 uid 為條件
+  const userQuery = query(collection(db, 'user'), where('uid', '==', uid));
+  const userDoc = await getDocs(userQuery);
+  const docRef = doc(db, 'user', userDoc.docs[0].id);
 
   // 如果 firestore 沒有 phoneNumber 欄位，就加入
-  if (!userDoc.data().phoneNumber) {
+  if (!userDoc.docs[0].data().phoneNumber) {
     // 加入 phoneNumber 到 doc
     await updateDoc(docRef, {
-      phoneNumber: phoneNumber
+      phoneNumber: phoneNumber || ''
     }).then(() => {
       toast.success('建立使用者電話號碼成功！', {
         position: "top-right"
@@ -310,11 +411,16 @@ export const handlePhoneNumberField = async (userDoc: any, phoneNumber: string) 
 }
 
 // 建立 metadata 欄位
-export const handleMetadataField = async (userDoc: any, metadata: UserMetadata) => {
-  const docRef = doc(db, 'user', userDoc.id);
+export const handleMetadataField = async (user: User, metadata: UserMetadata) => {
+  const uid = user.uid;
+
+  // 查詢 user 文檔，以 uid 為條件
+  const userQuery = query(collection(db, 'user'), where('uid', '==', uid));
+  const userDoc = await getDocs(userQuery);
+  const docRef = doc(db, 'user', userDoc.docs[0].id);
 
   // 如果 firestore 沒有 metadata 欄位，就加入
-  if (!userDoc.data().metadata) {
+  if (!userDoc.docs[0].data().metadata) {
     // 加入 metadata 到 doc
     await updateDoc(docRef, {
       metadata: {
@@ -370,37 +476,37 @@ const handleUser = async (user: User) => {
   
   // 單獨處理 name
   if (user.displayName) { 
-    handleNameField(userQuerySnapshot.docs[0], user.displayName);
+    handleNameField(user, user.displayName);
   }
 
   // 單獨處理 email
   if (user.email) {
-    handleEmailField(userQuerySnapshot.docs[0], user.email);
+    handleEmailField(user, user.email);
   }
 
   // 單獨處理 photoURL
   if (user.photoURL) {
-    handlePhotoURLField(userQuerySnapshot.docs[0], user.photoURL);
+    handlePhotoURLField(user, user.photoURL);
   }
 
   // 單獨處理 bgPhotoURL
   if (user.photoURL) {
-    handleBgPhotoURLField(userQuerySnapshot.docs[0]);
+    handleBgPhotoURLField(user);
   }
 
   // 單獨處理 metadata
   if (user.metadata) {
-    handleMetadataField(userQuerySnapshot.docs[0], user.metadata);
+    handleMetadataField(user, user.metadata);
   }
 
   // 單獨處理 emailVerified
   if (user.emailVerified) {
-    handleEmailVerifiedField(userQuerySnapshot.docs[0], user.emailVerified);
+    handleEmailVerifiedField(user, user.emailVerified);
   }
-
+  
   // 單獨處理 phoneNumber
-  if (user.phoneNumber) {
-    handlePhoneNumberField(userQuerySnapshot.docs[0], user.phoneNumber);
+  if (user.phoneNumber || user.phoneNumber == null) {
+    handlePhoneNumberField(user, user.phoneNumber);
   }
 };
 

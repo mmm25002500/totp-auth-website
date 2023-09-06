@@ -16,7 +16,6 @@ interface Props {
     creationTime: string;
     lastSignInTime: string;
   };
-  deleteAccount: () => void;
 }
 
 const PersonalCard = (props: Props) => {
@@ -78,7 +77,7 @@ const PersonalCard = (props: Props) => {
           </table>
           
           <div className="flex mt-4 space-x-3 md:mt-6">
-            <button onClick={props.deleteAccount} className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 focus:outline-none dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">刪除帳戶</button>
+            <button onClick={() => router.push('/me/update_info')} className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">管理帳戶</button>
             <button onClick={logout_btn} className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-700 dark:focus:ring-gray-700">登出帳戶</button>
           </div>
         </div>

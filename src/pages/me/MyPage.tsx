@@ -33,42 +33,6 @@ const MyPage = () => {
     }
   });
 
-  // 刪除帳戶
-  const deleteAccount = async () => { 
-    
-    try {
-      const q = query(collection(db, 'user'), where('uid', '==', user?.uid)); // 替换为实际的集合名称和字段名
-  
-      const querySnapshot = await getDocs(q);
-  
-      querySnapshot.forEach(async (doc) => {
-        const docRef = doc.ref;
-  
-        // 删除文档
-        await deleteDoc(docRef);
-      });
-  
-      toast.success("刪除成功！", {
-        position: "top-right"
-      });
-    } catch (error) {
-      toast.error(`刪除失敗！\n錯誤訊息：\n${error}`, {
-        position: "top-right"
-      });
-    }
-      
-    // 刪除帳戶
-    auth.currentUser?.delete().then(() => {
-      toast.success("刪除成功！", {
-        position: "top-right" 
-      });
-    }).catch((error) => {
-      toast.error(`刪除失敗！\n錯誤訊息：\n${error}`, {
-        position: "top-right"
-      });
-    });
-  }
-
   // 將 firestore 資料拿下來
   const getUserData = async (uid: string) => {
     try {
@@ -117,7 +81,6 @@ const MyPage = () => {
               creationTime: userData?.metadata.creationTime || '',
               lastSignInTime: userData?.metadata.lastSignInTime || ''
             }}
-            deleteAccount={deleteAccount}
           ></PersonalCard>
         </div>
       </div>

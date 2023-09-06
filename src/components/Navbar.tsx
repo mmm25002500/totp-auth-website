@@ -22,7 +22,7 @@ const Navbar = () => {
   const Personal = (props: {user: User| undefined}) => {
     return (
       <button
-        onClick={() => { router.push('/my'); setIsOpen(false); }}
+        onClick={() => { router.push('/me/MyPage'); setIsOpen(false); }}
         className="flex w-full items-center mr-10 text-base font-normal hover:text-black/70 dark:hover:text-white/70"
       >
         {
