@@ -1,37 +1,37 @@
 import { auth, db } from "@/config/firebase";
-import { GoogleAuthProvider, Unsubscribe, User, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
-import { addDoc, collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
+import { GoogleAuthProvider, Unsubscribe, User, onAuthStateChanged, signInWithPopup } from "firebase/auth";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { toast } from 'react-hot-toast';
 
-// 查看是否有 cart 文檔，沒有的話就建立一個
-const handleUserCart = async (user: User) => {
+// 查看是否有 user 文檔，沒有的話就建立一個
+const handleUser = async (user: User) => {
   const uid = user.uid;
 
-  // 查詢 cart 文檔，以 uid 為條件
-  const cartQuery = query(collection(db, 'cart'), where('uid', '==', uid));
-  const cartQuerySnapshot = await getDocs(cartQuery);
+  // 查詢 user 文檔，以 uid 為條件
+  const userQuery = query(collection(db, 'user'), where('uid', '==', uid));
+  const userQuerySnapshot = await getDocs(userQuery);
 
-  if (cartQuerySnapshot.empty) {
-    // 如果沒有 cart 文檔，就建立一個
-    const newCartData = {
+  if (userQuerySnapshot.empty) {
+    // 如果沒有 user 文檔，就建立一個
+    const newUserData = {
       uid: uid,
-      items: []
+      totp: []
     };
     
     try {
-      const cartRef = collection(db, 'cart');
-      await addDoc(cartRef, newCartData);
-      toast.success('建立購物車成功！', {
+      const userRef = collection(db, 'user');
+      await addDoc(userRef, newUserData);
+      toast.success('建立使用者成功！', {
         position: "top-right"
       });
     } catch (error) {
-      console.error('Error creating cart document:', error);
-      toast.success(`建立購物車失敗！\n錯誤訊息：\n${error}`, {
+      console.error('Error creating user document:', error);
+      toast.success(`建立使用者失敗！\n錯誤訊息：\n${error}`, {
         position: "top-right"
       });
     }
   } else {
-    toast.success('購物車載入成功！', {
+    toast.success('使用者載入成功！', {
       position: "top-right"
     });
   }
@@ -48,7 +48,7 @@ export const handleGoogleLogin = async () => {
       position: "top-right"
     });
 
-    handleUserCart(result.user as User);
+    handleUser(result.user as User);
 
     return result.user as User;
   } catch (error) {

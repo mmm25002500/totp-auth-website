@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @next/next/no-html-link-for-pages */
 
-import { faCartShopping, faCircleInfo, faCircleUser, faHome, faPlus, faRightFromBracket, faRightToBracket, faStore } from "@fortawesome/free-solid-svg-icons";
+import { faCircleInfo, faCircleUser, faHome, faPlus, faRectangleList, faRightFromBracket, faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from 'next/link';
 import Themes from "./Themes";
@@ -55,19 +55,19 @@ const LoginBtn = (props: {user: User| undefined}) => {
 }
 
 // 已經登入的按鈕
-const CartBtn = (props: {user: User| undefined}) => {
+const CodeBtn = (props: {user: User| undefined}) => {
   const router = useRouter();
 
   return (
     props.user ? (
       <>
-        <div className="false" key="cart">
+        <div className="false" key="code">
           <button
-            onClick={() => router.push('/cart', { scroll: false })}
+            onClick={() => router.push('/code', { scroll: false })}
             className="flex items-center mr-10 text-base font-normal hover:text-black/70 dark:hover:text-white/70"
           >
-            <FontAwesomeIcon icon={faCartShopping} className="w-5 pr-1" />
-            購物車
+            <FontAwesomeIcon icon={faRectangleList} className="w-5 pr-1" />
+            驗證碼
           </button>
         </div>
       </>
@@ -96,19 +96,19 @@ const PersonalPageBtn = (props: {user: User| undefined}) => {
 }
 
 // 已經登入的按鈕
-const AddItemPageBtn = (props: {user: User| undefined}) => {
+const AddCodeBtn = (props: {user: User| undefined}) => {
   const router = useRouter();
 
   return (
     props.user ? (
       <>
-        <div className="false" key="AddItemPageBtn">
+        <div className="false" key="AddCpdeBtn">
           <button
-            onClick={() => router.push('/addItem', { scroll: false })}
+            onClick={() => router.push('/addCode', { scroll: false })}
             className="flex items-center mr-10 text-base font-normal hover:text-black/70 dark:hover:text-white/70"
           >
             <FontAwesomeIcon icon={faPlus} className="w-5 pr-1" />
-            增加商品
+            增加驗證碼
           </button>
         </div>
       </>
@@ -170,16 +170,11 @@ const Navbar = () => {
       href: "/",
       icon: faHome,
     },
-    {
-      title: "商店街",
-      href: "/store",
-      icon: faStore,
-    },
-    {
-      title: "關於我們",
-      href: "/About",
-      icon: faCircleInfo,
-    },
+    // {
+    //   title: "關於我們",
+    //   href: "/About",
+    //   icon: faCircleInfo,
+    // },
   ];
 
   const PhoneNavBtn = (props: { children: ReactNode }) => {
@@ -215,7 +210,7 @@ const Navbar = () => {
         <Link href="/">
           <button className="flex items-center border-none bg-transparent text-lg normal-case">
             <img src="/imgs/bityo_bg_circle.png" alt="logo" className="w-7 mr-2" />
-            <h1 className="">幣友測試電商</h1>
+            <h1 className="">TOTP 2FA 驗證器</h1>
           </button>
         </Link>
         <div className="hidden flex-1 items-center justify-end sm:flex">
@@ -234,14 +229,14 @@ const Navbar = () => {
             </div>
           ))}
 
-          {/* 購物車按鈕 */}
-          <CartBtn user={user}></CartBtn>
+          {/* 驗證碼按鈕 */}
+          <CodeBtn user={user}></CodeBtn>
 
           {/* 登入按鈕 */}
           <LoginBtn user={user}></LoginBtn>
 
-          {/* 增加商品按鈕 */}
-          <AddItemPageBtn user={user}></AddItemPageBtn>
+          {/* 增加驗證碼按鈕 */}
+          <AddCodeBtn user={user}></AddCodeBtn>
 
           {/* 登出按鈕 */}
           <LogoutBtn user={user} checkAuth={checkAuth}></LogoutBtn>
@@ -290,11 +285,11 @@ const Navbar = () => {
             </li>
           ))}
 
-          {/* 購物車按鈕 */}
+          {/* 驗證碼按鈕 */}
           {
             user ? (
               <PhoneNavBtn>
-                <CartBtn user={user}></CartBtn>
+                <CodeBtn user={user}></CodeBtn>
               </PhoneNavBtn>
             ) : ''
           }
@@ -308,11 +303,11 @@ const Navbar = () => {
             )
           }
 
-          {/* 增加商品按鈕 */}
+          {/* 增加驗證碼按鈕 */}
           {
             user ? (
               <PhoneNavBtn>
-                <AddItemPageBtn user={user}></AddItemPageBtn>
+                <AddCodeBtn user={user}></AddCodeBtn>
               </PhoneNavBtn>
             ) : ''
           }

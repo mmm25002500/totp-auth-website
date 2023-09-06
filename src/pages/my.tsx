@@ -1,5 +1,5 @@
 import { auth } from "@/config/firebase";
-import { Unsubscribe, User, deleteUser, onAuthStateChanged } from "firebase/auth";
+import { Unsubscribe, User, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";

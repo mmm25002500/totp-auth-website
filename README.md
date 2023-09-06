@@ -1,5 +1,8 @@
 # TOTP Wesite
-一個2fa驗證氣，用 React + Next.js + TailwindCSS + TypeScript + Firebase 而成的。
+一個 TOTP 2FA 驗證器，網頁版。
+
+技術： React + Next.js + TailwindCSS + TypeScript + Firebase
+
 部署：vercel
 
 ## 熱更新
