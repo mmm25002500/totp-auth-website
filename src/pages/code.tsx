@@ -176,7 +176,7 @@ const Code = () => {
       <Head>
         <title>驗證碼 - TOTP 2FA</title>
       </Head>
-      <div className="container mx-auto pt-8 pl-5 pr-5">
+      <div className="container mx-auto pt-16 pl-5 pr-5">
         {
           userData?.totp.length === 0 ? (
             <div className="flex items-center p-4 mb-4 text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800 text-lg" role="alert">

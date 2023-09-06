@@ -205,8 +205,8 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav>
-      <div className="flex h-16 z-50 w-full items-center justify-between bg-white px-3 font-bold text-black shadow md:justify-center md:px-7 mb-1 dark:bg-gray-800 dark:text-white">
+    <nav className="">
+      <div className="fixed flex h-16 z-50 w-full items-center bg-transparent justify-between px-3 font-bold text-black shadow md:justify-center md:px-7 mb-1 dark:text-white">
         <Link href="/">
           <button className="flex items-center border-none bg-transparent text-lg normal-case">
             <img src="/imgs/bityo_bg_circle.png" alt="logo" className="w-7 mr-2" />
@@ -269,7 +269,7 @@ const Navbar = () => {
 
       {/* 手機版頁面 */}
       <div className={`w-full md:block md:w-auto ${isOpen? '': 'hidden'}`} id="navbar-default">
-        <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700 sm:hidden">
+        <ul className="font-medium flex flex-col p-4 md:p-0 mt-16 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700 sm:hidden">
 
           {/* 寫一個迴圈 */}
           {navlinks.map((link) => (
