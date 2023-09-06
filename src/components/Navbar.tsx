@@ -12,157 +12,156 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { handleGoogleLogin } from "@/components/CheckLogin";
 
-// 個人頁面按鈕
-const Personal = (props: {user: User| undefined}) => {
-  return (
-    <Link
-      href="/my"
-      prefetch={false}
-      className="flex items-center mr-10 text-base font-normal hover:text-black/70 dark:hover:text-white/70"
-    >
-      {
-        props.user?.photoURL ? (
-          <div className="relative mr-2">
-            <img className="w-7 h-7 rounded-full" src={props.user?.photoURL} alt="" />
-            <span className="top-0 left-5 absolute  w-3 h-3 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
-          </div>
-        ): (
-          <FontAwesomeIcon icon={faCircleUser} className="w-5 pr-1" />
-        )
-      }
-      {props.user?.displayName || "個人頁面"}
-    </Link>
-  )
-}
-
-// 還沒登入的按鈕
-const LoginBtn = (props: {user: User| undefined}) => {
-  return (
-    props.user ? '' : (
-        <>
-          <div className="false" key="login">
-            <button
-              onClick={() => handleGoogleLogin()}
-              className="flex items-center mr-10 text-base font-normal hover:text-black/70 dark:hover:text-white/70"
-            >
-            <FontAwesomeIcon icon={faRightToBracket} className="w-5 pr-1" />
-            登入
-          </button>
-        </div>
-      </>
-    )
-  )
-}
-
-// 已經登入的按鈕
-const CodeBtn = (props: {user: User| undefined}) => {
-  const router = useRouter();
-
-  return (
-    props.user ? (
-      <>
-        <div className="false" key="code">
-          <button
-            onClick={() => router.push('/code', { scroll: false })}
-            className="flex items-center mr-10 text-base font-normal hover:text-black/70 dark:hover:text-white/70"
-          >
-            <FontAwesomeIcon icon={faRectangleList} className="w-5 pr-1" />
-            驗證碼
-          </button>
-        </div>
-      </>
-    ) : (
-      <>
-      </>
-    )
-  )
-}
-
-// 已經登入的按鈕
-const PersonalPageBtn = (props: {user: User| undefined}) => {
-
-  return (
-    props.user ? (
-      <>
-        <div className="false" key="PersonalPageBtn">
-            <Personal user={ props.user } />
-        </div>
-      </>
-    ) : (
-      <>
-      </>
-    )
-  )
-}
-
-// 已經登入的按鈕
-const AddCodeBtn = (props: {user: User| undefined}) => {
-  const router = useRouter();
-
-  return (
-    props.user ? (
-      <>
-        <div className="false" key="AddCpdeBtn">
-          <button
-            onClick={() => router.push('/addCode', { scroll: false })}
-            className="flex items-center mr-10 text-base font-normal hover:text-black/70 dark:hover:text-white/70"
-          >
-            <FontAwesomeIcon icon={faPlus} className="w-5 pr-1" />
-            增加驗證碼
-          </button>
-        </div>
-      </>
-    ) : (
-      <>
-      </>
-    )
-  )
-}
-
-// 已經登入的按鈕
-const LogoutBtn = (props: {user: User| undefined, checkAuth: () => void}) => {
-  const router = useRouter();
-
-  const logout_btn = () => {
-    signOut(auth).then(() => {
-      toast.success('登出成功！', {
-        position: "top-right"
-      });
-    }).catch((error) => {
-      toast.success(`登出失敗！\n錯誤訊息：\n${error}`, {
-        position: "top-right"
-      });
-    });
-    props.checkAuth();
-    
-    router.push('/', { scroll: false });
-  }
-
-  return (
-    props.user ? (
-      <>
-        <div className="false" key="logout">
-          <button
-            onClick={() => logout_btn()}
-            className="flex items-center mr-10 text-base font-normal hover:text-black/70 dark:hover:text-white/70"
-          >
-            <FontAwesomeIcon icon={faRightFromBracket} className="w-5 pr-1" />
-            登出
-          </button>
-        </div>
-      </>
-    ) : (
-      <>
-      </>
-    )
-  )
-}
-
 // 整個 Navbar
 const Navbar = () => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<User | undefined>();
+
+  // 個人頁面按鈕
+  const Personal = (props: {user: User| undefined}) => {
+    return (
+      <button
+        onClick={() => { router.push('/my'); setIsOpen(false); }}
+        className="flex w-full items-center mr-10 text-base font-normal hover:text-black/70 dark:hover:text-white/70"
+      >
+        {
+          props.user?.photoURL ? (
+            <div className="relative mr-2">
+              <img className="w-7 h-7 rounded-full" src={props.user?.photoURL} alt="" />
+              <span className="top-0 left-5 absolute  w-3 h-3 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
+            </div>
+          ): (
+            <FontAwesomeIcon icon={faCircleUser} className="w-5 pr-1" />
+          )
+        }
+        {props.user?.displayName || "個人頁面"}
+      </button>
+    )
+  }
+
+  // 還沒登入的按鈕
+  const LoginBtn = (props: {user: User| undefined}) => {
+    return (
+      props.user ? '' : (
+          <>
+            <div className="false" key="login">
+              <button
+              onClick={() => { handleGoogleLogin(); setIsOpen(false);}}
+                className="w-full flex items-center mr-10 text-base font-normal hover:text-black/70 dark:hover:text-white/70"
+              >
+              <FontAwesomeIcon icon={faRightToBracket} className="w-5 pr-1" />
+              登入
+            </button>
+          </div>
+        </>
+      )
+    )
+  }
+
+  // 已經登入的按鈕
+  const CodeBtn = (props: {user: User| undefined}) => {
+    const router = useRouter();
+
+    return (
+      props.user ? (
+        <>
+          <div className="false" key="code">
+            <button
+              onClick={() => {router.push('/code', { scroll: false }); setIsOpen(false);}}
+              className="w-full flex items-center mr-10 text-base font-normal hover:text-black/70 dark:hover:text-white/70"
+            >
+              <FontAwesomeIcon icon={faRectangleList} className="w-5 pr-1" />
+              驗證碼
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+        </>
+      )
+    )
+  }
+
+  // 已經登入的按鈕
+  const PersonalPageBtn = (props: {user: User| undefined}) => {
+
+    return (
+      props.user ? (
+        <>
+          <div className="false" key="PersonalPageBtn">
+              <Personal user={ props.user } />
+          </div>
+        </>
+      ) : (
+        <>
+        </>
+      )
+    )
+  }
+
+  // 已經登入的按鈕
+  const AddCodeBtn = (props: {user: User| undefined}) => {
+    const router = useRouter();
+
+    return (
+      props.user ? (
+        <>
+          <div className="false" key="AddCpdeBtn">
+            <button
+              onClick={() => {router.push('/addCode', { scroll: false }); setIsOpen(false);}}
+              className="w-full flex items-center mr-10 text-base font-normal hover:text-black/70 dark:hover:text-white/70"
+            >
+              <FontAwesomeIcon icon={faPlus} className="w-5 pr-1" />
+              增加驗證碼
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+        </>
+      )
+    )
+  }
+
+  // 已經登入的按鈕
+  const LogoutBtn = (props: {user: User| undefined, checkAuth: () => void}) => {
+    const router = useRouter();
+
+    const logout_btn = () => {
+      signOut(auth).then(() => {
+        toast.success('登出成功！', {
+          position: "top-right"
+        });
+      }).catch((error) => {
+        toast.success(`登出失敗！\n錯誤訊息：\n${error}`, {
+          position: "top-right"
+        });
+      });
+      props.checkAuth();
+      
+      router.push('/', { scroll: false });
+    }
+
+    return (
+      props.user ? (
+        <>
+          <div className="false" key="logout">
+            <button
+              onClick={() => { logout_btn(); setIsOpen(false); }}
+              className="w-full flex items-center mr-10 text-base font-normal hover:text-black/70 dark:hover:text-white/70"
+            >
+              <FontAwesomeIcon icon={faRightFromBracket} className="w-5 pr-1" />
+              登出
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+        </>
+      )
+    )
+  }
 
   const navlinks = [
     {
@@ -205,7 +204,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="">
+    <nav className="z-50">
       <div className="fixed flex h-16 z-50 w-full items-center bg-transparent justify-between px-3 font-bold text-black shadow md:justify-center md:px-7 mb-1 dark:text-white">
         <Link href="/">
           <button className="flex items-center border-none bg-transparent text-lg normal-case">
@@ -268,7 +267,7 @@ const Navbar = () => {
       </div>
 
       {/* 手機版頁面 */}
-      <div className={`w-full md:block md:w-auto ${isOpen? '': 'hidden'}`} id="navbar-default">
+      <div className={`fixed w-full pl-2 pr-2 md:block md:w-auto ${isOpen? '': 'hidden'}`} id="navbar-default">
         <ul className="font-medium flex flex-col p-4 md:p-0 mt-16 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700 sm:hidden">
 
           {/* 寫一個迴圈 */}
@@ -277,6 +276,7 @@ const Navbar = () => {
               <Link
                 href={link.href}
                 prefetch={false}
+                onClick={() => setIsOpen(false)}
                 className="py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent flex w-full"
               >
                 <FontAwesomeIcon icon={link.icon} className="w-5 pr-1" />
