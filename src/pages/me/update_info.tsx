@@ -183,7 +183,7 @@ const UpdateInfo = () => {
 
 					<button type="button" onClick={() => deleteAccount(user as User)} className="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br focus:outline-none text-gray-900 dark:text-white bg-red-500 hover:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
 						<span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
-							同步 Google 資料
+							刪除帳戶
 						</span>
 					</button>
 				</form>
