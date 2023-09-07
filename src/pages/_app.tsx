@@ -12,11 +12,12 @@ import { config } from '@fortawesome/fontawesome-svg-core'
 config.autoAddCss = false;
 
 const App = ({ Component, pageProps }: AppProps) => {
+
   return (
     <NextUIProvider>
       <ThemeProvider attribute="class">
         <Layout>
-          <NextNProgress height={2} color="#00FFFF" />
+          <NextNProgress height={2} color="#00FFFF" options={{ easing: 'ease', speed: 500 }}  />
           <Toaster />
           <Component {...pageProps} />
         </Layout>

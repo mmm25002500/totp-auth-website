@@ -5,6 +5,7 @@ import {CircularProgress, Progress} from "@nextui-org/react";
 import { toast } from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import ModalAlert from "./Code/ModalAlert";
 
 interface CodeCardProps {
   name: string;
@@ -37,7 +38,13 @@ const CodeCard = (props: CodeCardProps) => {
 
   useEffect(() => {
     // 初始計算
-    setOtp(totp(secret));
+    try {
+      setOtp(totp(secret));
+    } catch (error) {
+      toast.error(`發生錯誤！\n名稱: ${props.name}\n金鑰: ${props.code}\n錯誤訊息：\n${error}`, {
+        position: "top-right"
+      });
+    }
     setTimeLeft(calculateTimeLeft());
   }, []); 
 
@@ -46,7 +53,13 @@ const CodeCard = (props: CodeCardProps) => {
     const newTimeLeft = timeLeft - 1;
 
     if (newTimeLeft <= 0) {
-      setOtp(totp(secret));
+      try {
+        setOtp(totp(secret));
+      } catch (error) {
+        toast.error(`發生錯誤！\n名稱: ${props.name}\n金鑰: ${props.code}\n錯誤訊息：\n${error}`, {
+          position: "top-right"
+        });
+      }
       setTimeLeft(period);
     } else {
       setTimeLeft(newTimeLeft);
@@ -70,15 +83,21 @@ const CodeCard = (props: CodeCardProps) => {
         <div className="flex items-center space-x-4">
           <div className="flex-shrink-0">
             {/* <img className="w-8 h-8 rounded-full" src="/docs/images/people/profile-picture-1.jpg" alt="Neil image" /> */}
-            <button onClick={props.deleteCode}>
-              <FontAwesomeIcon icon={faCircleXmark} className="w-8 text-red-500" />
-            </button>
+            <ModalAlert
+              deleteTOTP={props.deleteCode}
+            ></ModalAlert>
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-lg font-medium text-gray-900 truncate dark:text-white">
             { props.name }
             </p>
-            <span className="bg-purple-100 text-purple-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300">{ props.category }</span>
+            {
+              otp ? (<></>): (
+                <span className="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">錯誤！</span>
+              )
+            }
+            <span className="bg-purple-100 text-purple-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300">{props.category}</span>
+
           </div>
           <button
             onClick={() => { copyToClipboard(otp) }}
