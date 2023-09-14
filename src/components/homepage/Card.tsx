@@ -11,7 +11,7 @@ interface CardProps {
 
 const HomePageCard = (props: CardProps) => {
   return (
-    <div className="card w-96 shadow-xl text-black dark:text-white bg-white dark:bg-base-100 justify-self-center">
+    <div className="card w-96 shadow-xl text-black dark:text-white bg-white dark:bg-gray-700 justify-self-center">
       <figure className="px-10 pt-10">
         <FontAwesomeIcon icon={props.icon} className="rounded-xl w-1/4 pr-1" />
         {/* <img src="/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg" alt="No Img" className="rounded-xl" /> */}
