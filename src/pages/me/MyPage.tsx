@@ -65,7 +65,7 @@ const MyPage = () => {
         <title>{user?.displayName || '我的頁面'} - TOTP 2FA</title>
       </Head>
       <div className="container mx-auto pt-16 pl-5 pr-5">
-        <div className="text-left text-gray-500 dark:text-gray-400 text-2xl">
+        <div className="text-left text-gray-blue-500 dark:text-gray-blue-400 text-2xl">
           <p>
             個人頁面
           </p>

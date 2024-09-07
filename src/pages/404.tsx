@@ -1,16 +1,27 @@
 import Head from "next/head";
+import SEO from "@/config/SEO.json";
 
-const NotFound = () => { 
+const NotFound = () => {
   return (
     <>
       <Head>
-        <title>找不到頁面 - TOTP 2FA</title>
+        <title>{SEO.NotFound.title}</title>
+        <meta name="description" content={SEO.NotFound.description} />
+        <meta property="og:title" content={SEO.NotFound.title} />
+        <meta property="og:description" content={SEO.NotFound.description} />
+        <meta property="og:image" content={SEO.NotFound.image} />
+        {/* <meta property="og:url" content={`https://yourdomain.com/post/${post.frontMatter.id}`} /> */}
+        <meta property="og:type" content={SEO.NotFound.type} />
+        {/* <meta name="twitter:card" content="summary_large_image" /> */}
+        <meta name="twitter:title" content={SEO.NotFound.title} />
+        <meta name="twitter:description" content={SEO.NotFound.description} />
+        <meta name="twitter:image" content={SEO.NotFound.image} />
       </Head>
-      <div className="text-center text-gray-500 dark:text-gray-400 text-2xl pt-16">
-        <p>
-          404 NotFound <br />
-          找不到頁面
-        </p>
+      <div className="flex items-center justify-center w-full h-96 m-auto">
+        <div className="text-center">
+          <p className="text-5xl">404</p>
+          <p className="">Page Not Found</p>
+        </div>
       </div>
     </>
   )

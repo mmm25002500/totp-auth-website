@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import totp from "totp-generator";
+import { TOTP } from "totp-generator";
 import { useInterval } from 'react-use';
-import {CircularProgress, Progress} from "@nextui-org/react";
+import { CircularProgress, Progress } from "@nextui-org/react";
 import { toast } from "react-hot-toast";
+import ModalAlert from "./Code/ModalAlert";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
-import ModalAlert from "./Code/ModalAlert";
 
 interface CodeCardProps {
   name: string;
@@ -16,10 +16,8 @@ interface CodeCardProps {
 
 const CodeCard = (props: CodeCardProps) => {
 
-  const secret = props.code;
-
-  // TOTP Token 預設的有效時間是 30 秒
   const period = 30;
+  const { otp, expires } = TOTP.generate("JBSWY3DPEHPK3PXP", { period: 30 });
 
   const calculateTimeLeft = () => {
     const currentTime = Math.floor(new Date().getTime() / 1000);
@@ -33,34 +31,18 @@ const CodeCard = (props: CodeCardProps) => {
     });
   };
 
-  const [otp, setOtp] = useState('');
   const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {
-    // 初始計算
-    try {
-      setOtp(totp(secret));
-    } catch (error) {
-      toast.error(`發生錯誤！\n名稱: ${props.name}\n金鑰: ${props.code}\n錯誤訊息：\n${error}`, {
-        position: "top-right"
-      });
-    }
     setTimeLeft(calculateTimeLeft());
-  }, []); 
+  }, []);
 
   // 更新剩餘時間
   useInterval(() => {
     const newTimeLeft = timeLeft - 1;
 
     if (newTimeLeft <= 0) {
-      try {
-        setOtp(totp(secret));
-      } catch (error) {
-        toast.error(`發生錯誤！\n名稱: ${props.name}\n金鑰: ${props.code}\n錯誤訊息：\n${error}`, {
-          position: "top-right"
-        });
-      }
-      setTimeLeft(period);
+      setTimeLeft(30);
     } else {
       setTimeLeft(newTimeLeft);
     }
@@ -85,14 +67,16 @@ const CodeCard = (props: CodeCardProps) => {
             {/* <img className="w-8 h-8 rounded-full" src="/docs/images/people/profile-picture-1.jpg" alt="Neil image" /> */}
             <ModalAlert
               deleteTOTP={props.deleteCode}
-            ></ModalAlert>
+            >
+              <FontAwesomeIcon icon={faCircleXmark} className="w-8 text-red-500" />
+            </ModalAlert>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-lg font-medium text-gray-900 truncate dark:text-white">
-            { props.name }
+            <p className="text-lg font-medium text-gray-blue-900 truncate dark:text-white">
+              {props.name}
             </p>
             {
-              otp ? (<></>): (
+              otp ? (<></>) : (
                 <span className="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">錯誤！</span>
               )
             }
@@ -101,8 +85,8 @@ const CodeCard = (props: CodeCardProps) => {
           </div>
           <button
             onClick={() => { copyToClipboard(otp) }}
-            className="inline-flex items-center text-xl font-semibold text-gray-900 dark:text-white">
-            { otp }
+            className="inline-flex items-center text-xl font-semibold text-gray-blue-900 dark:text-white">
+            {otp}
           </button>
           <CircularProgress
             aria-label="Loading..."
@@ -115,7 +99,7 @@ const CodeCard = (props: CodeCardProps) => {
               unit: 'second',
               unitDisplay: 'narrow',
             }}
-            showValueLabel={ true }
+            showValueLabel={true}
           />
         </div>
         {/* <div>Category: {props.category}</div> */}

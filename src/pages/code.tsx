@@ -8,6 +8,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import CodeCard from '@/components/CodeCard';
 import Head from 'next/head';
+import ModalAlert from '@/components/Code/ModalAlert';
+import SEO from '@/config/SEO.json';
 
 interface totpItems {
   name: string;
@@ -33,16 +35,16 @@ export const deleteUserCode = async (uid: string) => {
       const userDocRef = doc(db, 'user', userDoc.id);
       await deleteDoc(userDocRef);
       toast.success("刪除驗證碼資料成功！", {
-        position: "top-right" 
+        position: "top-right"
       });
     } else {
       toast.error("找不到驗證碼資料！", {
-        position: "top-right" 
+        position: "top-right"
       });
     }
   } catch (error) {
     toast.error(`刪除驗證碼資料失敗！\n錯誤訊息：\n${error}`, {
-      position: "top-right" 
+      position: "top-right"
     });
   }
 }
@@ -68,118 +70,128 @@ const Code = () => {
       }
     });
 
-    // 載入 User Data
-    const loadUserData = async (uid: string) => {
-      try {
-        const userRef = collection(db, "user");
+  // 載入 User Data
+  const loadUserData = async (uid: string) => {
+    try {
+      const userRef = collection(db, "user");
 
-        const q = query(userRef, where("uid", "==", uid));
-        
-        const querySnapshot = await getDocs(q);
+      const q = query(userRef, where("uid", "==", uid));
 
-        querySnapshot.forEach((doc) => {
-          // doc.data() is never undefined for query doc snapshots
-          // console.log(doc.id, " => ", doc.data());
-          setUserData(doc.data() as userData);
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        // console.log(doc.id, " => ", doc.data());
+        setUserData(doc.data() as userData);
+      });
+
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    }
+  };
+
+  // 刪除 TOTP 項目
+  const deleteTotpItem = async (totpCode: string) => {
+    try {
+      const userRef = collection(db, "user");
+      const q = query(userRef, where("uid", "==", user?.uid));
+      const querySnapshot = await getDocs(q);
+
+      // 遍歷尋找符合 TOTP 的
+      querySnapshot.forEach(async (doc) => {
+        const docRef = doc.ref;
+
+        // 獲取當前 TOTP 的 Array
+        const userData = doc.data();
+        const totpArray = userData.totp || [];
+
+        // 建立一個新的 TOTP Array，把要刪除的排除
+        const newTotpArray = totpArray.filter((item: { secret: string; }) => item.secret !== totpCode);
+
+        // 更新 Doc
+        await updateDoc(docRef, {
+          totp: newTotpArray
         });
-    
-      } catch (error) {
-        console.error('Error loading user data:', error);
-      }
-    };
-  
-    // 刪除 TOTP 項目
-    const deleteTotpItem = async (totpCode: string) => {
-      try {
-        const userRef = collection(db, "user");
-        const q = query(userRef, where("uid", "==", user?.uid));
+
+        // 重新加載 TOTP
+        if (user?.uid) {
+          loadUserData(user.uid);
+        }
+
+      });
+
+      toast.success('已成功刪除驗證碼！', {
+        position: 'top-right'
+      });
+    } catch (error) {
+      toast.error(`刪除驗證碼失敗！\n錯誤訊息：\n${error}`, {
+        position: 'top-right'
+      });
+    }
+  };
+
+  // 清空 所有 TOTP 項目
+  const clearTotpItem = async () => {
+    try {
+      if (user) {
+        const uid = user.uid;
+        const userRef = collection(db, 'user');
+        const q = query(userRef, where('uid', '==', uid));
         const querySnapshot = await getDocs(q);
-    
-        // 遍歷尋找符合 TOTP 的
-        querySnapshot.forEach(async (doc) => {
-          const docRef = doc.ref;
 
-          // 獲取當前 TOTP 的 Array
-          const userData = doc.data();
-          const totpArray = userData.totp || [];
+        if (!querySnapshot.empty) {
+          const userDoc = querySnapshot.docs[0];
+          const userId = userDoc.id;
 
-          // 建立一個新的 TOTP Array，把要刪除的排除
-          const newTotpArray = totpArray.filter((item: { secret: string; }) => item.secret !== totpCode);
-
-          // 更新 Doc
-          await updateDoc(docRef, {
-            totp: newTotpArray
+          await updateDoc(doc(db, 'user', userId), {
+            totp: []
           });
-          
-          // 重新加載 TOTP
-          if (user?.uid) {
-            loadUserData(user.uid);
-          }
 
-        });
-        
-        toast.success('已成功刪除驗證碼！', {
-          position: 'top-right'
-        });
-      } catch (error) {
-        toast.error(`刪除驗證碼失敗！\n錯誤訊息：\n${error}`, {
-          position: 'top-right'
-        });
-      }
-    };
-  
-    // 清空 所有 TOTP 項目
-    const clearTotpItem = async () => {
-      try {
-        if (user) {
-          const uid = user.uid;
-          const userRef = collection(db, 'user');
-          const q = query(userRef, where('uid', '==', uid));
-          const querySnapshot = await getDocs(q);
-    
-          if (!querySnapshot.empty) {
-            const userDoc = querySnapshot.docs[0];
-            const userId = userDoc.id;
-    
-            await updateDoc(doc(db, 'user', userId), {
-              totp: []
-            });
-    
-            loadUserData(uid);
-    
-            toast.success('已成功清空驗證碼！', {
-              position: 'top-right'
-            });
-          } else {
-            toast.error('找不到驗證碼！', {
-              position: 'top-right'
-            });
-          }
+          loadUserData(uid);
+
+          toast.success('已成功清空驗證碼！', {
+            position: 'top-right'
+          });
         } else {
-          toast.error('請先登入！', {
+          toast.error('找不到驗證碼！', {
             position: 'top-right'
           });
         }
-      } catch (error) {
-        toast.error(`清空驗證碼失敗！\n錯誤訊息：\n${error}`, {
+      } else {
+        toast.error('請先登入！', {
           position: 'top-right'
         });
       }
-    };
-    
-    useEffect(() => {
-      checkAuth();
-    }, []);
-  
+    } catch (error) {
+      toast.error(`清空驗證碼失敗！\n錯誤訊息：\n${error}`, {
+        position: 'top-right'
+      });
+    }
+  };
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
   return (
     <>
       <Head>
-        <title>驗證碼 - TOTP 2FA</title>
+        <title>{SEO.Code.title}</title>
+        <meta name="description" content={SEO.Code.description} />
+        <meta property="og:title" content={SEO.Code.title} />
+        <meta property="og:description" content={SEO.Code.description} />
+        <meta property="og:image" content={SEO.Code.image} />
+        {/* <meta property="og:url" content={`https://yourdomain.com/post/${post.frontMatter.id}`} /> */}
+        <meta property="og:type" content={SEO.Code.type} />
+        {/* <meta name="twitter:card" content="summary_large_image" /> */}
+        <meta name="twitter:title" content={SEO.Code.title} />
+        <meta name="twitter:description" content={SEO.Code.description} />
+        <meta name="twitter:image" content={SEO.Code.image} />
       </Head>
-      <div className="container mx-auto pt-16 pl-5 pr-5">
+      <div className="container pt-16 pl-5 pr-5">
         {
           userData?.totp.length === 0 ? (
-            <div className="flex items-center p-4 mb-4 text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800 text-lg" role="alert">
+            <div className="flex items-center p-4 mb-4 text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-blue-800 dark:text-red-400 dark:border-red-800 text-lg" role="alert">
               <FontAwesomeIcon icon={faTriangleExclamation} className="inline w-4 h-4 mr-3" />
               <span className="sr-only">Info</span>
               <div>
@@ -188,38 +200,43 @@ const Code = () => {
               </div>
             </div>
           ) : (
-              <button onClick={clearTotpItem} className="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800">
-              <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+
+            <ModalAlert
+              deleteTOTP={clearTotpItem}
+            >
+              <span className="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-blue-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800">
+                <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-blue-900 rounded-md group-hover:bg-opacity-0">
                   點我清空所有驗證碼
+                </span>
               </span>
-            </button>
+            </ModalAlert>
           )
         }
         {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"> */}
-          <div className="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:px-8 sm:pt-8 dark:bg-gray-800 dark:border-gray-700">
-            <div className="flex items-center justify-between mb-4">
-              <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">驗證碼</h5>
-              <button onClick={ () => router.push('/addCode')} className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">
-                  新增驗證碼
-              </button>
-            </div>
-            <div className="flow-root">
-              <ul role="list" className="divide-y divide-gray-200 dark:divide-gray-700">
-                  {
-                    userData?.totp.map((items) => (
-                      <div key={items.name}>
-                        <CodeCard
-                          code={items.secret}
-                          name={items.name}
-                          category={items.category}
-                          deleteCode={() => deleteTotpItem(items.secret)}
-                        />
-                      </div>
-                    ))
-                  }
-              </ul>
-            </div>
+        <div className="w-full p-4 bg-white border border-gray-blue-200 rounded-lg shadow sm:px-8 sm:pt-8 dark:bg-gray-blue-800 dark:border-gray-blue-700">
+          <div className="flex items-center justify-between mb-4">
+            <h5 className="text-xl font-bold leading-none text-gray-blue-900 dark:text-white">驗證碼</h5>
+            <button onClick={() => router.push('/addCode')} className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">
+              新增驗證碼
+            </button>
           </div>
+          <div className="flow-root">
+            <ul role="list" className="divide-y divide-gray-blue-200 dark:divide-gray-blue-700">
+              {
+                userData?.totp.map((items) => (
+                  <div key={items.name}>
+                    <CodeCard
+                      code={items.secret}
+                      name={items.name}
+                      category={items.category}
+                      deleteCode={() => deleteTotpItem(items.secret)}
+                    />
+                  </div>
+                ))
+              }
+            </ul>
+          </div>
+        </div>
         {/* </div> */}
       </div>
     </>

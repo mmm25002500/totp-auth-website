@@ -36,41 +36,41 @@ const PersonalCard = (props: Props) => {
 
   return (
     <>
-      <div className="w-full bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+      <div className="w-full bg-white border border-gray-blue-200 rounded-lg shadow dark:bg-gray-blue-800 dark:border-gray-blue-700">
         <div className="flex flex-col items-center pb-10">
           <div className="relative mb-3 mt-3">
-            <img className="w-24 h-24 shadow-lg p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-" src={props.photoURL} alt="Bonnie image" />
-            <span className="right-1 bottom-1 absolute  w-5 h-5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
+            <img className="w-24 h-24 shadow-lg p-1 rounded-full ring-2 ring-gray-blue-300 dark:ring-gray-blue-" src={props.photoURL} alt="Bonnie image" />
+            <span className="right-1 bottom-1 absolute  w-5 h-5 bg-green-400 border-2 border-white dark:border-gray-blue-800 rounded-full"></span>
           </div>
 
-          <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">{ props.name }</h5>
-          {/* <span className="text-sm text-gray-500 dark:text-gray-400">{ props.email }</span>
-          <span className="text-sm text-gray-700 dark:text-gray-300">UID: {props.uid}</span> */}
+          <h5 className="mb-1 text-xl font-medium text-gray-blue-900 dark:text-white">{ props.name }</h5>
+          {/* <span className="text-sm text-gray-blue-500 dark:text-gray-blue-400">{ props.email }</span>
+          <span className="text-sm text-gray-blue-700 dark:text-gray-blue-300">UID: {props.uid}</span> */}
           
           <table className="text-sm my-3">
             <tbody>
               <tr>
-                <td className="px-2 py-2 text-gray-500 font-semibold">Email</td>
+                <td className="px-2 py-2 text-gray-blue-500 font-semibold">Email</td>
                 <td className="px-2 py-2">{ props.email }</td>
               </tr>
               <tr>
-                <td className="px-2 py-2 text-gray-500 font-semibold">手機號碼</td>
+                <td className="px-2 py-2 text-gray-blue-500 font-semibold">手機號碼</td>
                 <td className="px-2 py-2">{ props.phoneNumber? props.phoneNumber: '無' }</td>
               </tr>
               <tr>
-                <td className="px-2 py-2 text-gray-500 font-semibold">Email 是否驗證</td>
+                <td className="px-2 py-2 text-gray-blue-500 font-semibold">Email 是否驗證</td>
                 <td className="px-2 py-2">{ props.emailVerified ? '是' : '否' }</td>
               </tr>
               <tr>
-                <td className="px-2 py-2 text-gray-500 font-semibold">創建時間</td>
+                <td className="px-2 py-2 text-gray-blue-500 font-semibold">創建時間</td>
                 <td className="px-2 py-2">{ props.metadata.creationTime }</td>
               </tr>
               <tr>
-                <td className="px-2 py-2 text-gray-500 font-semibold">最後登入時間</td>
+                <td className="px-2 py-2 text-gray-blue-500 font-semibold">最後登入時間</td>
                 <td className="px-2 py-2">{ props.metadata.lastSignInTime }</td>
               </tr>
               <tr>
-                <td className="px-2 py-2 text-gray-500 font-semibold">UID</td>
+                <td className="px-2 py-2 text-gray-blue-500 font-semibold">UID</td>
                 <td className="px-2 py-2">{props.uid}</td>
               </tr>
             </tbody>
@@ -78,7 +78,7 @@ const PersonalCard = (props: Props) => {
           
           <div className="flex mt-4 space-x-3 md:mt-6">
             <button onClick={() => router.push('/me/update_info')} className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">管理帳戶</button>
-            <button onClick={logout_btn} className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-700 dark:focus:ring-gray-700">登出帳戶</button>
+            <button onClick={logout_btn} className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-gray-blue-900 bg-white border border-gray-blue-300 rounded-lg hover:bg-gray-blue-100 focus:ring-4 focus:outline-none focus:ring-gray-blue-200 dark:bg-gray-blue-800 dark:text-white dark:border-gray-blue-600 dark:hover:bg-gray-blue-700 dark:hover:border-gray-blue-700 dark:focus:ring-gray-blue-700">登出帳戶</button>
           </div>
         </div>
       </div>

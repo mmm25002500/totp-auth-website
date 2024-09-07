@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @next/next/no-html-link-for-pages */
 
-import { faCircleInfo, faCircleUser, faHome, faPlus, faRectangleList, faRightFromBracket, faRightToBracket } from "@fortawesome/free-solid-svg-icons";
+import { faCircleUser, faHome, faPlus, faRectangleList, faRightFromBracket, faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from 'next/link';
 import Themes from "./Themes";
@@ -29,7 +29,7 @@ const Navbar = () => {
           props.user?.photoURL ? (
             <div className="relative mr-2">
               <img className="w-7 h-7 rounded-full" src={props.user?.photoURL} alt="" />
-              <span className="top-0 left-5 absolute  w-3 h-3 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
+              <span className="top-0 left-5 absolute  w-3 h-3 bg-green-400 border-2 border-white dark:border-gray-blue-800 rounded-full"></span>
             </div>
           ): (
             <FontAwesomeIcon icon={faCircleUser} className="w-5 pr-1" />
@@ -180,7 +180,7 @@ const Navbar = () => {
     return (
       props.children != null ? (
         <li>
-          <div className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
+          <div className="block py-2 pl-3 pr-4 text-gray-blue-900 rounded hover:bg-gray-blue-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-blue-700 dark:hover:text-white md:dark:hover:bg-transparent">
             { props.children }
           </div>
         </li>
@@ -268,7 +268,7 @@ const Navbar = () => {
 
       {/* 手機版頁面 */}
       <div className={`fixed w-full pl-2 pr-2 md:block md:w-auto ${isOpen? '': 'hidden'}`} id="navbar-default">
-        <ul className="font-medium flex flex-col p-4 md:p-0 mt-16 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700 sm:hidden">
+        <ul className="font-medium flex flex-col p-4 md:p-0 mt-16 border border-gray-blue-100 rounded-lg bg-gray-blue-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-blue-800 md:dark:bg-gray-blue-900 dark:border-gray-blue-700 sm:hidden">
 
           {/* 寫一個迴圈 */}
           {navlinks.map((link) => (
@@ -277,7 +277,7 @@ const Navbar = () => {
                 href={link.href}
                 prefetch={false}
                 onClick={() => setIsOpen(false)}
-                className="py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent flex w-full"
+                className="py-2 pl-3 pr-4 text-gray-blue-900 rounded hover:bg-gray-blue-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-blue-700 dark:hover:text-white md:dark:hover:bg-transparent flex w-full"
               >
                 <FontAwesomeIcon icon={link.icon} className="w-5 pr-1" />
                 {link.title}
@@ -331,7 +331,7 @@ const Navbar = () => {
           }
 
           <li>
-            <div className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
+            <div className="block py-2 pl-3 pr-4 text-gray-blue-900 rounded hover:bg-gray-blue-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-blue-700 dark:hover:text-white md:dark:hover:bg-transparent">
               <Themes></Themes>
             </div>
           </li>
