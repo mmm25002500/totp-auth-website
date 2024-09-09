@@ -1,13 +1,5 @@
-import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import { CardProps } from "@/types/HomePage/Card";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-interface CardProps {
-  title: string;
-  description: string;
-  icon: IconDefinition;
-  buttonText?: string;
-  buttonLink?: string;
-}
 
 const HomePageCard = (props: CardProps) => {
   return (

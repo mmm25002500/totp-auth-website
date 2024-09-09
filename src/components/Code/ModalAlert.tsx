@@ -6,13 +6,9 @@ import {
   DialogBody,
   DialogFooter,
 } from "@material-tailwind/react";
+import { ModalProps } from "@/types/Code/ModalAlert";
 
-interface Props {
-  deleteTOTP: () => void;
-  children?: React.ReactNode;
-}
-
-const DialogDefault = (props: Props) => {
+const DialogDefault = (props: ModalProps) => {
   const [open, setOpen] = React.useState(false);
 
   const handleOpen = () => setOpen(!open);

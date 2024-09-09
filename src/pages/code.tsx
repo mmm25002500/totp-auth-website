@@ -8,8 +8,9 @@ import CodeCard from '@/components/CodeCard';
 import Head from 'next/head';
 import ModalAlert from '@/components/Code/ModalAlert';
 import SEO from '@/config/SEO.json';
-import { checkAuth, clearTotpItems, deleteTotpItem, loadUserData } from '@/lib/totp/crud';
+import { clearTotpItems, deleteTotpItem, loadUserData } from '@/lib/totp/crud';
 import { UserData, totpItems } from '@/types/userData';
+import { checkAuth } from '@/lib/totp/account';
 
 const Code = () => {
   const [userData, setUserData] = useState<UserData | undefined>();
@@ -74,7 +75,6 @@ const Code = () => {
     return () => unsubscribe();
   }, []);
 
-
   return (
     <>
       <Head>
@@ -90,7 +90,7 @@ const Code = () => {
         <meta name="twitter:description" content={SEO.Code.description} />
         <meta name="twitter:image" content={SEO.Code.image} />
       </Head>
-      <div className="container pt-16 pl-5 pr-5">
+      <div className="container pt-5 pl-5 pr-5">
         {
           userData?.totp.length === 0 ? (
             <div className="flex items-center p-4 mb-4 text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-blue-800 dark:text-red-400 dark:border-red-800 text-lg" role="alert">

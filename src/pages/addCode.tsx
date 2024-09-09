@@ -1,21 +1,16 @@
 import InputLabel from "@/components/Input/InputLabel";
-import { auth, db } from "@/config/firebase";
+import { auth } from "@/config/firebase";
 import { Unsubscribe, User, onAuthStateChanged } from "firebase/auth";
-import { arrayUnion, collection, getDocs, query, updateDoc, where } from "firebase/firestore";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import SEO from "@/config/SEO.json";
-
-export interface totpData {
-  name: string;
-  secret: string;
-  category: string;
-}
+import { totpItems } from "@/types/userData";
+import { addTotp } from "@/lib/totp/crud";
 
 const AddCode = () => {
-  const [totp, setTotp] = useState<totpData>({ name: '', secret: '', category: '' });
+  const [totp, setTotp] = useState<totpItems>({ name: '', secret: '', category: '' });
   const [user, setUser] = useState<User>();
   const router = useRouter();
 
@@ -39,38 +34,18 @@ const AddCode = () => {
   }, []);
 
   // 新增 TOTP 資料
-  const addTotp = async () => {
-    try {
-      const uid = user?.uid;
+  const handleAddTotp = async () => {
+    if (!user?.uid) return;
 
-      // 使用 where 查找 user 文檔
-      const userQuery = query(collection(db, 'user'), where('uid', '==', uid));
-      const userQuerySnapshot = await getDocs(userQuery);
+    const result = await addTotp(user.uid, totp);
 
-      if (!userQuerySnapshot.empty) {
-        // 找到匹配的 Doc
-        const docRef = userQuerySnapshot.docs[0].ref;
+    if (result.success) {
+      toast.success('新增 TOTP 成功！', { position: 'top-right' });
 
-        // 更新 Doc 來添加新的 TOTP
-        await updateDoc(docRef, {
-          totp: arrayUnion(totp)
-        });
-
-        toast.success("新增 TOTP 成功！", {
-          position: "top-right"
-        });
-
-        // 清空表單
-        setTotp({ name: '', secret: '', category: '' });
-      } else {
-        toast.error("未找到匹配 UID 的文檔", {
-          position: "top-right"
-        });
-      }
-    } catch (error) {
-      toast.error("新增 TOTP 資料失敗！", {
-        position: "top-right"
-      });
+      // 清空表單
+      setTotp({ name: '', secret: '', category: '' });
+    } else {
+      toast.error(`新增 TOTP 失敗！\n錯誤訊息：${result.message}`, { position: 'top-right' });
     }
   };
 
@@ -89,7 +64,7 @@ const AddCode = () => {
         <meta name="twitter:description" content={SEO.AddCode.description} />
         <meta name="twitter:image" content={SEO.AddCode.image} />
       </Head>
-      <div className="container mx-auto pt-16 pl-5 pr-5">
+      <div className="container mx-auto pt-5 pl-5 pr-5">
         <form onSubmit={e => e.preventDefault()}>
           <InputLabel
             value={totp.name}
@@ -112,7 +87,7 @@ const AddCode = () => {
             onChange={e => setTotp({ ...totp, category: e.target.value })}
           />
           <button
-            onClick={addTotp}
+            onClick={handleAddTotp}
             className="px-3 py-2 border-2 border-bityo rounded-lg hover:bg-bityo/20">
             新增驗證碼
           </button>

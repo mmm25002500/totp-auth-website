@@ -1,31 +1,51 @@
-import { getDocs, collection, query, where, updateDoc, deleteDoc } from 'firebase/firestore';
+import { getDocs, collection, query, where, updateDoc, deleteDoc, arrayUnion } from 'firebase/firestore';
 import { db, auth } from '@/config/firebase';
 import { UserData } from '@/types/userData';
 import { onAuthStateChanged, User, Unsubscribe } from 'firebase/auth';
 
-// 驗證是否登入並載入使用者資料
-export const checkAuth = (callback: (user: User | undefined, userData?: UserData) => void): Unsubscribe => {
-  return onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      try {
-        const userRef = collection(db, 'user');
-        const q = query(userRef, where('uid', '==', user.uid));
-        const querySnapshot = await getDocs(q);
+// Check user data
+export const loadUserData = async (uid: string) => {
+  try {
+    const userRef = collection(db, 'user');
+    const q = query(userRef, where('uid', '==', uid));
+    const querySnapshot = await getDocs(q);
 
-        if (!querySnapshot.empty) {
-          const data = querySnapshot.docs[0].data() as UserData;
-          callback(user, data);  // 回調帶回使用者及資料
-        } else {
-          callback(user);  // 回調帶回使用者，無資料
-        }
-      } catch (error) {
-        console.error('Error loading user data:', error);
-        callback(user);  // 只回傳使用者，沒有資料
-      }
+    if (!querySnapshot.empty) {
+      const data = querySnapshot.docs[0].data();
+
+      // 顯式斷言為 userData 類型
+      return { success: true, data: data as UserData };
     } else {
-      callback(undefined);  // 沒有登入
+      return { success: false, message: '找不到使用者資料' };
     }
-  });
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+};
+
+// add TOTP item
+export const addTotp = async (uid: string, totp: { name: string; secret: string; category: string }): Promise<{ success: boolean; message?: string }> => {
+  try {
+    // 使用 where 查找 user 文檔
+    const userQuery = query(collection(db, 'user'), where('uid', '==', uid));
+    const userQuerySnapshot = await getDocs(userQuery);
+
+    if (!userQuerySnapshot.empty) {
+      // 找到匹配的 Doc
+      const docRef = userQuerySnapshot.docs[0].ref;
+
+      // 更新 Doc 來添加新的 TOTP
+      await updateDoc(docRef, {
+        totp: arrayUnion(totp),
+      });
+
+      return { success: true };
+    } else {
+      return { success: false, message: '未找到匹配 UID 的文檔' };
+    }
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
 };
 
 // Delete user code data
@@ -41,25 +61,6 @@ export const deleteUserCode = async (uid: string) => {
       return { success: true };
     } else {
       return { success: false, message: '找不到驗證碼資料' };
-    }
-  } catch (error: any) {
-    return { success: false, message: error.message };
-  }
-};
-
-export const loadUserData = async (uid: string) => {
-  try {
-    const userRef = collection(db, 'user');
-    const q = query(userRef, where('uid', '==', uid));
-    const querySnapshot = await getDocs(q);
-
-    if (!querySnapshot.empty) {
-      const data = querySnapshot.docs[0].data();
-      
-      // 顯式斷言為 userData 類型
-      return { success: true, data: data as UserData };
-    } else {
-      return { success: false, message: '找不到使用者資料' };
     }
   } catch (error: any) {
     return { success: false, message: error.message };
