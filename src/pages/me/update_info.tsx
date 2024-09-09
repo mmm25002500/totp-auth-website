@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import Head from "next/head";
 import { UserData } from "@/components/CheckLogin";
 import { checkAuth, deleteAccount, getUserData, submitChange, syncGoogleUserData } from "@/lib/totp/account";
+import ModalAlert from "@/components/Code/ModalAlert";
 
 const UpdateInfo = () => {
   const [user, setUser] = useState<User>();
@@ -176,13 +177,16 @@ const UpdateInfo = () => {
             </span>
           </button>
 
-          <button type="button" onClick={() => deleteAccountHandler(user as User)} className="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br focus:outline-none text-gray-blue-900 dark:text-white bg-red-500 hover:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
-            <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-blue-900 rounded-md group-hover:bg-opacity-0">
-              刪除帳戶
-            </span>
-          </button>
+          <ModalAlert
+            deleteTOTP={() => deleteAccountHandler(user as User)}
+          >
+            <button type="button" className="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br focus:outline-none text-gray-blue-900 dark:text-white bg-red-500 hover:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+              <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-blue-900 rounded-md group-hover:bg-opacity-0">
+                刪除帳戶
+              </span>
+            </button>
+          </ModalAlert>
         </form>
-
       </div>
     </>
   )

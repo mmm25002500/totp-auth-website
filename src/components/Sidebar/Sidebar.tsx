@@ -10,11 +10,10 @@ import {
   Card,
 } from "@material-tailwind/react";
 import { SidebarListItemProps, SidebarProps } from "@/types/Sidebar/Sidebar";
-import BityoIcon from "@/images/icon/bityo.png";
-import { useRouter } from 'next/navigation';
-import Image from "next/image";
-import AlertCard from "../Alert/AlertCard";
-import toast from "react-hot-toast";
+// import BityoIcon from "@/images/icon/bityo.png";
+import { useRouter } from 'next/navigation'; import {
+  CurrencyDollarIcon,
+} from "@heroicons/react/24/solid";
 
 const SidebarListItem = (props: SidebarListItemProps) => {
   const router = useRouter();
@@ -96,7 +95,7 @@ const Sidebar = (props: SidebarProps) => {
         onResize={undefined}
         onResizeCapture={undefined}
         placement="right"
-        className="text-white dark:bg-txt-dark"
+        className="text-white dark:bg-blue-gray-900"
         transition={{ type: "spring", duration: 0.8 }}
         overlayProps={{
           className: "fixed",
@@ -113,55 +112,65 @@ const Sidebar = (props: SidebarProps) => {
               closeDrawer();
             }}
           >
-            <Image
+            {/* <Image
               src={BityoIcon}
               alt="Bityo"
               className="h-8 w-8"
-            />
+            /> */}
             <Typography variant="h5" className="text-black dark:text-white" nonce={undefined} onResize={undefined} onResizeCapture={undefined} placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
               Bityo
             </Typography>
           </button>
           <List nonce={undefined} onResize={undefined} onResizeCapture={undefined} className="dark:text-blue-gray-100" placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
-            {
-              props.ListData.map((item, index) => (
-                <SidebarListItem
-                  key={index}
-                  icon={item.icon}
-                  text={item.text}
-                  link={item.link}
-                  disabled={item.disabled}
-                  onClick={() => {
-                    item.onClick && item.onClick();
-                    closeDrawer();
-                  }}
-                  chip={item.chip}
-                />
-              ))
-            }
-          </List>
-          <AlertCard
-            icon={"symbol"}
-            title="幣友合夥人計畫"
-            description="加入幣友，成為合夥人，可以獲取高額反傭，還有更多福利等你來拿。"
-            openAlert={openAlert}
-            onClose={() => setOpenAlert(false)}
-            leftBtn={{
-              text: "取消",
-              onClick: () => setOpenAlert(false)
-            }}
-            rightBtn={{
-              text: "了解更多",
-              onClick: () => {
-                toast.error("此功能尚未開放！\n敬請期待", {
-                  duration: 2000,
-                  position: 'top-left',
-                })
-                router.push('/cooperate/partners');
+            {/* <SidebarListItem
+              key={index}
+              icon={item.icon}
+              text={item.text}
+              link={item.link}
+              disabled={item.disabled}
+              onClick={() => {
+                item.onClick && item.onClick();
                 closeDrawer();
-              }
-            }}
-          />
+              }}
+              chip={item.chip}
+            /> */}
+
+            <SidebarListItem
+              icon={CurrencyDollarIcon}
+              key={1}
+              text={'驗證碼'}
+              link={'/code'}
+              disabled={false}
+              onClick={() => {
+                router.push('/code');
+                closeDrawer();
+              }}
+            />
+
+            <SidebarListItem
+              icon={CurrencyDollarIcon}
+              key={1}
+              text={'新增驗證碼'}
+              link={'/addCode'}
+              disabled={false}
+              onClick={() => {
+                router.push('/addCode');
+                closeDrawer();
+              }}
+            />
+
+            <SidebarListItem
+              icon={CurrencyDollarIcon}
+              key={1}
+              text={'我的頁面'}
+              link={'/me/MyPage'}
+              disabled={false}
+              onClick={() => {
+                router.push('/me/MyPage');
+                closeDrawer();
+              }}
+            />
+          </List>
         </Card>
       </Drawer>
     </>

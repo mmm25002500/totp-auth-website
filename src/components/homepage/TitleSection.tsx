@@ -9,7 +9,7 @@ const TitleSection = () => {
         <span className="bg-gradient-to-r from-tpp via-tpp to-[#2878c8] inline-block text-transparent bg-clip-text">
           全台灣最強大的
         </span>
-        <br className="xs:hidden" />
+        <br className="sm:hidden" />
         {/* 子標題 */}
         <span className="bg-gradient-to-r from-[#17ff8f] to-[#17FFAD] inline-block text-transparent bg-clip-text">
           二步驟驗證器

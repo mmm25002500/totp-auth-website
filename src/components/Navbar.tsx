@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @next/next/no-html-link-for-pages */
 
-import { faCircleUser, faKey, faPlus, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import { faKey, faPlus, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Themes from "./Themes";
 import { useEffect, useState } from "react";
@@ -52,13 +52,8 @@ const Navbar = () => {
         if (data) {
           setUserData(data);
         }
-        // else {
-        //   toast.error('找不到使用者資料！', { position: 'top-right' });
-        // }
       } else {
         setUser(undefined);
-        // router.push('/');
-        // toast.error('請先登入！', { position: 'top-right' });
       }
     });
 
@@ -75,20 +70,19 @@ const Navbar = () => {
             <></>
           </div>
           {/* Logo */}
-          <div className="flex flex-1 sm:items-stretch sm:justify-start">
-            <div className="flex flex-shrink-0 items-center">
-              <button onClick={() => router.push('/')}>
-                <Image
-                  src="/imgs/bityo_bg_circle.png"
-                  alt="about-image"
-                  width={1920}
-                  height={1920}
-                  className="h-8 w-auto drop-shadow-three dark:drop-shadow-none lg:mr-0"
-                />
-                <p>TOTP 2FA 驗證器</p>
-              </button>
-            </div>
-          </div>
+          <button
+            className="flex items-center gap-2"
+            onClick={() => router.push('/')}
+          >
+            <Image
+              src="/imgs/bityo_bg_circle.png"
+              alt="about-image"
+              width={1920}
+              height={1920}
+              className="h-8 w-auto drop-shadow-three dark:drop-shadow-none lg:mr-0"
+            />
+            <p>TOTP 2FA 驗證器</p>
+          </button>
           <div className="absolute right-0 flex items-center gap-7 pr-2 sm:pr-0">
             {/* 首頁 */}
 
@@ -96,7 +90,7 @@ const Navbar = () => {
             {
               user && <button
                 onClick={() => { router.push('/code') }}
-                className="flex gap-2 items-center"
+                className="hidden md:flex gap-2 items-center"
               >
                 <FontAwesomeIcon icon={faKey} className="w-4" />
                 <p>驗證碼</p>
@@ -107,7 +101,7 @@ const Navbar = () => {
             {
               user && <button
                 onClick={() => { router.push('/addCode') }}
-                className="flex gap-2 items-center"
+                className="hidden md:flex gap-2 items-center"
               >
                 <FontAwesomeIcon icon={faPlus} className="w-4" />
                 <p>新增驗證碼</p>
@@ -118,7 +112,7 @@ const Navbar = () => {
             {
               user && <button
                 onClick={handleLogout}
-                className="flex gap-2 items-center"
+                className="hidden md:flex gap-2 items-center"
               >
                 <FontAwesomeIcon icon={faRightFromBracket} className="w-4" />
                 <p>登出</p>
@@ -129,7 +123,7 @@ const Navbar = () => {
             {
               user && <button
                 onClick={() => { router.push('/me/MyPage') }}
-                className="flex gap-2 items-center"
+                className="hidden md:flex gap-2 items-center"
               >
 
                 <div className="relative">
@@ -147,7 +141,7 @@ const Navbar = () => {
             {
               !user && <button
                 onClick={handleLogin}
-                className="flex gap-2 items-center"
+                className="hidden md:flex gap-2 items-center"
               >
                 <FontAwesomeIcon icon={faRightFromBracket} className="w-4" />
                 <p>登入</p>
@@ -155,10 +149,12 @@ const Navbar = () => {
             }
 
             {/* 切換背景 */}
-            <Themes></Themes>
+            <div className="hidden md:flex">
+              <Themes></Themes>
+            </div>
 
             {/* 更多 */}
-            <div className="relative ml-3">
+            <div className="relative ml- md:hidden">
               <IconButton
                 variant="text"
                 size="lg"
@@ -177,11 +173,10 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* <Sidebar
-      ListData={ListData}
-      isDrawerOpen={isDrawerOpen}
-      setIsDrawerOpen={setIsDrawerOpen}
-    ></Sidebar> */}
+      <Sidebar
+        isDrawerOpen={isDrawerOpen}
+        setIsDrawerOpen={setIsDrawerOpen}
+      ></Sidebar>
 
       <div className="sm:hidden" id="mobile-menu">
       </div>

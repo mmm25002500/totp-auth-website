@@ -1,5 +1,4 @@
 export interface SidebarProps {
-  ListData: SidebarListItemProps[];
   isDrawerOpen: boolean;
   setIsDrawerOpen: (value: boolean) => void;
 }
