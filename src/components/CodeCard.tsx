@@ -5,7 +5,8 @@ import { CircularProgress, Progress } from "@nextui-org/react";
 import { toast } from "react-hot-toast";
 import ModalAlert from "./Code/ModalAlert";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { isBase32 } from "@/lib/totp/crud";
 
 interface CodeCardProps {
   name: string;
@@ -17,7 +18,7 @@ interface CodeCardProps {
 const CodeCard = (props: CodeCardProps) => {
 
   const period = 30;
-  const { otp, expires } = TOTP.generate("JBSWY3DPEHPK3PXP", { period: 30 });
+  const totp = isBase32(props.code) ? TOTP.generate(props.code, { period: 30 }) : null;
 
   const calculateTimeLeft = () => {
     const currentTime = Math.floor(new Date().getTime() / 1000);
@@ -49,7 +50,7 @@ const CodeCard = (props: CodeCardProps) => {
   }, 1000);
 
   // 如果 otp 或 timeLeft 為 null, 可以回傳加載 null 或 Loading...
-  if (otp === null || timeLeft === null) {
+  if (totp?.otp === null || timeLeft === null) {
     return <div>Loading...</div>;
   }
 
@@ -65,29 +66,39 @@ const CodeCard = (props: CodeCardProps) => {
         <div className="flex items-center space-x-4">
           <div className="flex-shrink-0">
             {/* <img className="w-8 h-8 rounded-full" src="/docs/images/people/profile-picture-1.jpg" alt="Neil image" /> */}
+
+            {/* Delete Btn */}
             <ModalAlert
               deleteTOTP={props.deleteCode}
             >
-              <FontAwesomeIcon icon={faCircleXmark} className="w-8 text-red-500" />
+              <div className="rounded-full border-2 border-red-500 w-10 h-10 flex items-center justify-center">
+                <FontAwesomeIcon icon={faTrash} className="w-5 h-5 text-red-500" />
+              </div>
             </ModalAlert>
           </div>
+
+          {/* TOTP Name */}
           <div className="flex-1 min-w-0">
-            <p className="text-lg font-medium text-gray-blue-900 truncate dark:text-white">
+            <p className="text-base sm:text-lg font-medium text-gray-blue-900 truncate dark:text-white">
               {props.name}
             </p>
-            {
-              otp ? (<></>) : (
-                <span className="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">錯誤！</span>
-              )
-            }
-            <span className="bg-purple-100 text-purple-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-purple-900 dark:text-purple-300">{props.category}</span>
+            <span className="text-xs font-medium sm:mr-2 px-2 sm:px-2.5 sm:py-0.5 rounded bg-purple-100 text-purple-800 border-2 border-purple-300 dark:bg-tpp/30 dark:text-bityo dark:border-tpp">{props.category}</span>
 
           </div>
-          <button
-            onClick={() => { copyToClipboard(otp) }}
-            className="inline-flex items-center text-xl font-semibold text-gray-blue-900 dark:text-white">
-            {otp}
-          </button>
+          {
+            totp?.otp ? (
+              <button
+                onClick={() => { totp?.otp && copyToClipboard(totp?.otp) }}
+                className="text-xl font-semibold text-gray-blue-900 dark:text-white">
+                {totp?.otp}
+              </button>
+            ) : (
+              <p
+                className="text-sm sm:text-xl font-semibold text-red-500">
+                驗證碼錯誤！
+              </p>
+            )
+          }
           <CircularProgress
             aria-label="Loading..."
             size="lg"
@@ -102,8 +113,6 @@ const CodeCard = (props: CodeCardProps) => {
             showValueLabel={true}
           />
         </div>
-        {/* <div>Category: {props.category}</div> */}
-        {/* <button onClick={props.deleteCode}>delete</button> */}
       </li>
     </>
   )

@@ -58,23 +58,23 @@ const Index = () => {
 
           {/* 按鈕 */}
           <div className="w-full flex justify-center animate-fade-in">
-            <div className="mt-5 grid grid-cols-1 gap-3 sm:w-fit sm:grid-cols-3 items-center">
-              <a
+            <div className="mt-5 grid grid-cols-1 gap-3 sm:w-fit sm:grid-cols-2 items-center">
+              {/* <a
                 href="https://discord.gg/Rj69yHwqGy"
                 className="flex items-center justify-center rounded-lg px-2 py-2 border-2 border-tpp hover:bg-tpp/50 dark:hover:bg-tpp/50 text-white"
               >
                 <FontAwesomeIcon icon={faDiscord} className="mr-2 w-5" />
                 進入 Discord 社群
-              </a>
-              <a
-                href="https://www.facebook.com/groups/tpp.grass.voice"
+              </a> */}
+              <button
+                onClick={() => router.push('/code')}
                 className="flex items-center justify-center rounded-lg px-2 py-2 border-2 border-tpp hover:bg-tpp/50 dark:hover:bg-tpp/50 text-white"
               >
                 <FontAwesomeIcon icon={faFacebook} className="mr-2 w-5" />
                 開始使用
-              </a>
+              </button>
               <button
-                onClick={() => router.push('/kp-song')}
+                onClick={() => router.push('/about')}
                 className="flex items-center justify-center px-2 py-2 rounded-lg border-2 border-[#17FFAD] hover:bg-[#17FFAD]/50 dark:hover:bg-tpp/50 text-white"
               >
                 <FontAwesomeIcon icon={faYoutube} className="mr-2 w-5" />

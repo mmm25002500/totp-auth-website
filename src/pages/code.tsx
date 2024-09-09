@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { getDocs, collection, doc, getDoc, query, where, updateDoc, deleteDoc, arrayRemove } from 'firebase/firestore';
-import { User, Unsubscribe, onAuthStateChanged } from 'firebase/auth';
+import { User } from 'firebase/auth';
 import toast from 'react-hot-toast';
-import { auth, db } from '@/config/firebase';
 import { useRouter } from 'next/router';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
@@ -10,168 +8,72 @@ import CodeCard from '@/components/CodeCard';
 import Head from 'next/head';
 import ModalAlert from '@/components/Code/ModalAlert';
 import SEO from '@/config/SEO.json';
-
-interface totpItems {
-  name: string;
-  secret: string;
-  category: string;
-}
-
-export interface userData {
-  uid: string;
-  totp: totpItems[];
-}
-
-// 刪除驗證碼資料(搭配刪除帳號使用)
-export const deleteUserCode = async (uid: string) => {
-  try {
-    // 找到匹配的 user 文檔
-    const userQuery = query(collection(db, 'user'), where('uid', '==', uid));
-    const userQuerySnapshot = await getDocs(userQuery);
-
-    if (!userQuerySnapshot.empty) {
-      // 刪除 user 文檔
-      const userDoc = userQuerySnapshot.docs[0];
-      const userDocRef = doc(db, 'user', userDoc.id);
-      await deleteDoc(userDocRef);
-      toast.success("刪除驗證碼資料成功！", {
-        position: "top-right"
-      });
-    } else {
-      toast.error("找不到驗證碼資料！", {
-        position: "top-right"
-      });
-    }
-  } catch (error) {
-    toast.error(`刪除驗證碼資料失敗！\n錯誤訊息：\n${error}`, {
-      position: "top-right"
-    });
-  }
-}
+import { checkAuth, clearTotpItems, deleteTotpItem, loadUserData } from '@/lib/totp/crud';
+import { UserData, totpItems } from '@/types/userData';
 
 const Code = () => {
-  const [codesMap, setCodesMap] = useState<totpItems[]>([]);
-  const [userData, setUserData] = useState<userData | undefined>();
+  const [userData, setUserData] = useState<UserData | undefined>();
   const [user, setUser] = useState<User | undefined>();
   const router = useRouter();
 
-  // 驗證是否登入
-  const checkAuth = (): Unsubscribe =>
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser(user);
-        loadUserData(user.uid);
-      } else {
-        setUser(undefined);
-        router.push('/');
-        toast.error('請先登入！', {
-          position: 'top-right',
-        });
+  // 清空 TOTP 項目
+  const clearTotpItem = async () => {
+    if (!user) {
+      toast.error('請先登入！', { position: 'top-right' });
+      return;
+    }
+
+    const result = await clearTotpItems(user.uid);
+    if (result.success) {
+      toast.success('已成功清空驗證碼！', { position: 'top-right' });
+      const updatedUserData = await loadUserData(user.uid);
+      if (updatedUserData.success) {
+        setUserData(updatedUserData.data);  // 更新使用者資料
       }
-    });
-
-  // 載入 User Data
-  const loadUserData = async (uid: string) => {
-    try {
-      const userRef = collection(db, "user");
-
-      const q = query(userRef, where("uid", "==", uid));
-
-      const querySnapshot = await getDocs(q);
-
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        // console.log(doc.id, " => ", doc.data());
-        setUserData(doc.data() as userData);
-      });
-
-    } catch (error) {
-      console.error('Error loading user data:', error);
+    } else {
+      toast.error(`清空驗證碼失敗！\n錯誤訊息：\n${result.message}`, { position: 'top-right' });
     }
   };
 
   // 刪除 TOTP 項目
-  const deleteTotpItem = async (totpCode: string) => {
-    try {
-      const userRef = collection(db, "user");
-      const q = query(userRef, where("uid", "==", user?.uid));
-      const querySnapshot = await getDocs(q);
+  const deleteTotpItemHandler = async (totpCode: string) => {
+    if (!user) {
+      toast.error('請先登入！', { position: 'top-right' });
+      return;
+    }
 
-      // 遍歷尋找符合 TOTP 的
-      querySnapshot.forEach(async (doc) => {
-        const docRef = doc.ref;
-
-        // 獲取當前 TOTP 的 Array
-        const userData = doc.data();
-        const totpArray = userData.totp || [];
-
-        // 建立一個新的 TOTP Array，把要刪除的排除
-        const newTotpArray = totpArray.filter((item: { secret: string; }) => item.secret !== totpCode);
-
-        // 更新 Doc
-        await updateDoc(docRef, {
-          totp: newTotpArray
-        });
-
-        // 重新加載 TOTP
-        if (user?.uid) {
-          loadUserData(user.uid);
-        }
-
-      });
-
-      toast.success('已成功刪除驗證碼！', {
-        position: 'top-right'
-      });
-    } catch (error) {
-      toast.error(`刪除驗證碼失敗！\n錯誤訊息：\n${error}`, {
-        position: 'top-right'
-      });
+    const result = await deleteTotpItem(user.uid, totpCode);
+    if (result.success) {
+      toast.success('已成功刪除驗證碼！', { position: 'top-right' });
+      const updatedUserData = await loadUserData(user.uid);
+      if (updatedUserData.success) {
+        setUserData(updatedUserData.data);  // 刪除成功後更新使用者資料
+      }
+    } else {
+      toast.error(`刪除驗證碼失敗！\n錯誤訊息：\n${result.message}`, { position: 'top-right' });
     }
   };
 
-  // 清空 所有 TOTP 項目
-  const clearTotpItem = async () => {
-    try {
+  // 當使用者登入狀態改變時，檢查使用者驗證
+  useEffect(() => {
+    const unsubscribe = checkAuth((user, data) => {
       if (user) {
-        const uid = user.uid;
-        const userRef = collection(db, 'user');
-        const q = query(userRef, where('uid', '==', uid));
-        const querySnapshot = await getDocs(q);
-
-        if (!querySnapshot.empty) {
-          const userDoc = querySnapshot.docs[0];
-          const userId = userDoc.id;
-
-          await updateDoc(doc(db, 'user', userId), {
-            totp: []
-          });
-
-          loadUserData(uid);
-
-          toast.success('已成功清空驗證碼！', {
-            position: 'top-right'
-          });
+        setUser(user);
+        if (data) {
+          setUserData(data);
         } else {
-          toast.error('找不到驗證碼！', {
-            position: 'top-right'
-          });
+          toast.error('找不到使用者資料！', { position: 'top-right' });
         }
       } else {
-        toast.error('請先登入！', {
-          position: 'top-right'
-        });
+        setUser(undefined);
+        router.push('/');
+        toast.error('請先登入！', { position: 'top-right' });
       }
-    } catch (error) {
-      toast.error(`清空驗證碼失敗！\n錯誤訊息：\n${error}`, {
-        position: 'top-right'
-      });
-    }
-  };
+    });
 
-  useEffect(() => {
-    checkAuth();
+    return () => unsubscribe();
   }, []);
+
 
   return (
     <>
@@ -216,20 +118,23 @@ const Code = () => {
         <div className="w-full p-4 bg-white border border-gray-blue-200 rounded-lg shadow sm:px-8 sm:pt-8 dark:bg-gray-blue-800 dark:border-gray-blue-700">
           <div className="flex items-center justify-between mb-4">
             <h5 className="text-xl font-bold leading-none text-gray-blue-900 dark:text-white">驗證碼</h5>
-            <button onClick={() => router.push('/addCode')} className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">
+            <button
+              onClick={() => router.push('/addCode')}
+              className="text-sm border-tpp border-2 rounded-lg px-2 py-2 hover:bg-tpp/30dark:hover:bg-tpp-30"
+            >
               新增驗證碼
             </button>
           </div>
           <div className="flow-root">
             <ul role="list" className="divide-y divide-gray-blue-200 dark:divide-gray-blue-700">
               {
-                userData?.totp.map((items) => (
+                userData?.totp.map((items: totpItems) => (
                   <div key={items.name}>
                     <CodeCard
                       code={items.secret}
                       name={items.name}
                       category={items.category}
-                      deleteCode={() => deleteTotpItem(items.secret)}
+                      deleteCode={() => deleteTotpItemHandler(items.secret)}
                     />
                   </div>
                 ))
