@@ -1,5 +1,10 @@
-# TOTP Wesite - Documentation
+# (Archived) TOTP Wesite - Documentation
 A TOTP 2FA Authencator website.
+
+## IMPORTANT!! NOTICE!!
+This Project have moved to [Securibit/Securibit-Web](https://github.com/Securibit/Securibit-Web).
+This repo is old version. Please redirect to new version.
+
 ## Usage
 ...
 
